@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goserver
+  labels:
+    app: goserver
+spec:
+  selector:
+    matchLabels:
+      app: goserver
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: "goserver"
+    spec:
+      serviceAccount: server
+      containers:
+        - name: goserver
+          image: maicondev/hello-go:v9.6
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 20Mi
+            limits:
+              cpu: 500m
+              memory: 25Mi
+
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+            periodSeconds: 3
+            timeoutSeconds: 1
+            failureThreshold: 30
+            successThreshold: 1
+            initialDelaySeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+            periodSeconds: 5
+            timeoutSeconds: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+            periodSeconds: 3
+            successThreshold: 1
+            failureThreshold: 1
+
+          envFrom:
+            - configMapRef:
+                name: goserver-env
+            - secretRef:
+                name: goserver-secret
+
+          volumeMounts:
+            - name: goserver-pvc
+              mountPath: "/go/pvc"
+              readOnly: false
+
+            - name: goserver-family
+              mountPath: "/go/myfamily"
+              readOnly: true
+
+      volumes:
+        - name: goserver-pvc
+          persistentVolumeClaim:
+            claimName: goserver-pvc
+
+        - name: goserver-family
+          configMap:
+            name: goserver-family
+            items:
+              - key: members
+                path: family.txt
