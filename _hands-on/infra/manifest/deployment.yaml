@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: load-gen-node
-  namespace: hands-on-lab
+  namespace: application
   labels:
     app: load-gen-node
 spec:
@@ -15,6 +15,13 @@ spec:
       labels:
         app: load-gen-node
     spec:
+      nodeSelector:
+        workload: application
+      tolerations:
+        - key: "dedicated"
+          operator: "Equal"
+          value: "application"
+          effect: "NoSchedule"
       containers:
         - name: load-gen-node
           image: localhost/load-gen-node:latest

@@ -21,10 +21,13 @@ nodes:
         kind: JoinConfiguration
         nodeRegistration:
           kubeletExtraArgs:
-            # Como seu host tem 10 CPUs e 20GB, reservamos o excesso
-            # para que o K8s gerencie apenas 2 CPUs e 4GB para seus Pods
+            node-labels: "workload=application"
             kube-reserved: "cpu=7,memory=15Gi"
             system-reserved: "cpu=1,memory=1Gi"
+          taints:
+            - key: "dedicated"
+              value: "application"
+              effect: "NoSchedule"
 
   - role: worker
     kubeadmConfigPatches:
@@ -32,8 +35,13 @@ nodes:
         kind: JoinConfiguration
         nodeRegistration:
           kubeletExtraArgs:
+            node-labels: "workload=application"
             kube-reserved: "cpu=7,memory=15Gi"
             system-reserved: "cpu=1,memory=1Gi"
+          taints:
+            - key: "dedicated"
+              value: "application"
+              effect: "NoSchedule"
 
   - role: worker
     kubeadmConfigPatches:
@@ -41,8 +49,13 @@ nodes:
         kind: JoinConfiguration
         nodeRegistration:
           kubeletExtraArgs:
+            node-labels: "workload=application"
             kube-reserved: "cpu=7,memory=15Gi"
             system-reserved: "cpu=1,memory=1Gi"
+          taints:
+            - key: "dedicated"
+              value: "application"
+              effect: "NoSchedule"
   - role: worker
     kubeadmConfigPatches:
       - |

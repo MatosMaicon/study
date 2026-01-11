@@ -17,7 +17,7 @@ port_forward_loop() {
 }
 
 # Port-forward do Load Gen Node
-port_forward_loop "hands-on-lab" "load-gen-node-service" "8080" "80" "LoadGen" &
+port_forward_loop "application" "load-gen-node-service" "8080" "80" "LoadGen" &
 LOADGEN_PID=$!
 
 # Port-forward do SigNoz (Frontend + API)

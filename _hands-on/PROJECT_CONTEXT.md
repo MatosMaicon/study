@@ -30,12 +30,12 @@ Configurações do ambiente de execução.
 
 **Cluster Kind (`kind.yaml`):**
 - 1 Nó Control-Plane.
-- 3 Nós Workers (Restritos): Configurados para simular **2 CPUs e 4GB de RAM** (via `kube-reserved` e `system-reserved`).
+- 3 Nós Workers (Application): Dedicados ao namespace `application` via taints e labels (label `workload=application`).
 - 1 Nó Worker (Platform): Sem restrições de recursos, dedicado para ferramentas de plataforma (label `workload=platform`).
 
 **Manifestos K8s (`/infra/manifest`):**
-- **Namespace**: `hands-on-lab`.
-- **Deployment**: Configurado com 100m CPU de request e afinidade para NÃO rodar no control-plane.
+- **Namespace**: `application`.
+- **Deployment**: Configurado com 100m CPU de request, `nodeSelector` e `tolerations` para rodar exclusivamente nos nós de aplicação.
 - **Service**: Tipo `LoadBalancer` (usamos proxy por limitações de rede WSL2).
 - **HPA**: Escala de 1 a 10 réplicas quando o uso de CPU passa de 50%.
 
@@ -58,7 +58,7 @@ ou
 
 ### Monitorar o HPA e Pods:
 ```bash
-watch -n 1 "kubectl get hpa,pods -n hands-on-lab"
+watch -n 1 "kubectl get hpa,pods -n application"
 ```
 
 ### Monitorar Consumo dos Nós:
