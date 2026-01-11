@@ -1,9 +1,12 @@
 # Configuração para coletar métricas e logs do cluster K8s
 # Envia os dados para o SigNoz instalado no namespace platform
 
+global:
+  clusterName: kind-lab
+  deploymentEnvironment: dev
+
 otelCollectorEndpoint: signoz-otel-collector.platform.svc.cluster.local:4317
 otelInsecure: true
-clusterName: hands-on-kind
 
 # Agente que roda em todos os nós (DaemonSet)
 otelAgent:
@@ -14,6 +17,8 @@ otelAgent:
     limits:
       cpu: 200m
       memory: 200Mi
+  rbac:
+    create: true
 
 # Deployment para agregação de dados
 otelDeployment:
@@ -26,21 +31,23 @@ otelDeployment:
       cpu: 300m
       memory: 256Mi
 
-# Habilita presets comuns de monitoramento de K8s
+# Habilita presets comuns de monitoramento de K8s conforme o chart signoz/k8s-infra
 presets:
   # Monitoramento de recursos do host (CPU, Mem, Disco, etc)
   hostMetrics:
     enabled: true
-  # Monitoramento de recursos do Kubernetes (Pods, Nodes, etc)
+  # Monitoramento de recursos do Kubernetes via Kubelet (Pods, Nodes, etc)
   kubeletMetrics:
     enabled: true
   # Coleta de logs do Kubernetes
   logsCollection:
     enabled: true
-  # Métricas do Cluster (via Kube-State-Metrics)
+  # Injeta metadados (namespace, pod name, etc) nas métricas e logs
   kubernetesAttributes:
     enabled: true
-  # Métricas do K8s Events
-  kubernetesEvents:
+  # Métricas do Cluster (via Kube-State-Metrics) - Corrigido de kubeStateMetrics para clusterMetrics
+  clusterMetrics:
     enabled: true
-
+  # Métricas do K8s Events
+  k8sEvents:
+    enabled: true
