@@ -1,0 +1,46 @@
+# Configuração para coletar métricas e logs do cluster K8s
+# Envia os dados para o SigNoz instalado no namespace platform
+
+otelCollectorEndpoint: signoz-otel-collector.platform.svc.cluster.local:4317
+otelInsecure: true
+clusterName: hands-on-kind
+
+# Agente que roda em todos os nós (DaemonSet)
+otelAgent:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      cpu: 200m
+      memory: 200Mi
+
+# Deployment para agregação de dados
+otelDeployment:
+  enabled: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+
+# Habilita presets comuns de monitoramento de K8s
+presets:
+  # Monitoramento de recursos do host (CPU, Mem, Disco, etc)
+  hostMetrics:
+    enabled: true
+  # Monitoramento de recursos do Kubernetes (Pods, Nodes, etc)
+  kubeletMetrics:
+    enabled: true
+  # Coleta de logs do Kubernetes
+  logsCollection:
+    enabled: true
+  # Métricas do Cluster (via Kube-State-Metrics)
+  kubernetesAttributes:
+    enabled: true
+  # Métricas do K8s Events
+  kubernetesEvents:
+    enabled: true
+

@@ -40,9 +40,10 @@ Configurações do ambiente de execução.
 - **HPA**: Escala de 1 a 10 réplicas quando o uso de CPU passa de 50%.
 
 **Automação Helm (`/infra/helm`):**
-- `setup-infra.sh`: Script para instalar Metrics Server, SigNoz, Kong e Istio.
+- `setup-infra.sh`: Script para instalar Metrics Server, SigNoz, SigNoz K8s Infra, Kong e Istio.
 - `metrics-server/values.yaml`: Configurado para aceitar certificados do Kind.
 - `signoz/values.yaml`: Configuração do SigNoz com `nodeSelector` para o nó `workload=platform` e recursos otimizados.
+- `signoz/k8s-infra-values.yaml`: Configuração para coleta de métricas e logs de todos os nós do cluster.
 
 ---
 

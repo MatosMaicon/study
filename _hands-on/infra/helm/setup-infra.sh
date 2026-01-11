@@ -48,6 +48,12 @@ helm upgrade --install signoz signoz/signoz \
   --timeout 1h \
   -f signoz/values.yaml
 
+# 5. SigNoz K8s Infra (Metrics/Logs Collector)
+echo -e "\n${BLUE}📊 Instalando SigNoz K8s Infra...${NC}"
+helm upgrade --install signoz-k8s-infra signoz/k8s-infra \
+  --namespace platform \
+  -f signoz/k8s-infra-values.yaml
+
 echo -e "\n${GREEN}✅ Instalação concluída!${NC}"
 echo -e "Verifique os pods com: ${BLUE}kubectl get pods -A${NC}"
 echo -e "Acesse o SigNoz com: ${BLUE}kubectl port-forward -n platform svc/signoz-frontend 3301:3301${NC}"
