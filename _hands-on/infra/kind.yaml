@@ -16,5 +16,30 @@ nodes:
         hostPort: 443
         protocol: TCP
   - role: worker
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            # Como seu host tem 10 CPUs e 20GB, reservamos o excesso
+            # para que o K8s gerencie apenas 2 CPUs e 4GB para seus Pods
+            kube-reserved: "cpu=7,memory=15Gi"
+            system-reserved: "cpu=1,memory=1Gi"
+
   - role: worker
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            kube-reserved: "cpu=7,memory=15Gi"
+            system-reserved: "cpu=1,memory=1Gi"
+
   - role: worker
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            kube-reserved: "cpu=7,memory=15Gi"
+            system-reserved: "cpu=1,memory=1Gi"
