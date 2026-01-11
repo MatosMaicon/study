@@ -1,0 +1,9 @@
+# Valores customizados para o Istio
+# Geralmente o Istio é instalado via istioctl ou Helm charts específicos (base, discovery)
+global:
+  proxy:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 40Mi
+

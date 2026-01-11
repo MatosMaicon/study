@@ -1,0 +1,8 @@
+# Valores customizados para o Kong
+ingressController:
+  enabled: true
+  installCRDs: true
+
+proxy:
+  type: NodePort # Usando NodePort para facilitar no Kind sem MetalLB funcional
+

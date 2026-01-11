@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-gen-node
+  namespace: hands-on-lab
+  labels:
+    app: load-gen-node
+spec:
+  selector:
+    matchLabels:
+      app: load-gen-node
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: load-gen-node
+    spec:
+      containers:
+        - name: load-gen-node
+          image: localhost/load-gen-node:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 2
+            periodSeconds: 5

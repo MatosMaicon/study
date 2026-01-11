@@ -5,7 +5,7 @@ IMAGE_NAME="localhost/load-gen-node"
 # Pega a versão do argumento ou usa 'latest' por padrão
 TAG=${1:-"latest"}
 # Nome do cluster Kind (ajuste se o seu tiver outro nome)
-CLUSTER_NAME="kind-metallb"
+CLUSTER_NAME="kind-lab"
 
 # Cores para o output
 GREEN='\033[0;32m'
