@@ -7,6 +7,7 @@ Criar um ambiente controlado para estudar o comportamento de aplicações em con
 - **HPA (Horizontal Pod Autoscaler)** sob estresse de CPU.
 - **Limites de Recursos** (Requests/Limits) em nós simulados.
 - **Infraestrutura como Código** usando manifestos K8s e Helm.
+- **Observabilidade** com SigNoz (métricas, logs e traces).
 - **API Gateway e Service Mesh** (Kong/Istio - Próximos passos).
 
 ---
@@ -22,15 +23,15 @@ Aplicação Node.js (Express) que simula comportamentos de carga:
 
 **Scripts:**
 - `load-to-kind.sh`: Builda a imagem Docker local (`localhost/load-gen-node`) e injeta no cluster.
-- `port-forward.sh`: Cria um túnel estável (`port-forward`) para `localhost:8080`.
+- `port-forward.sh`: Cria túneis estáveis (`port-forward`) para `localhost:8080` (Load Gen Node) e `localhost:3301` (SigNoz Frontend).
 
 ### 2. Infraestrutura (`/infra`)
 Configurações do ambiente de execução.
 
 **Cluster Kind (`kind.yaml`):**
 - 1 Nó Control-Plane.
-- 3 Nós Workers.
-- **Limitação de Recursos**: Cada worker é configurado para simular **2 CPUs e 4GB de RAM** (via `kube-reserved` e `system-reserved`).
+- 3 Nós Workers (Restritos): Configurados para simular **2 CPUs e 4GB de RAM** (via `kube-reserved` e `system-reserved`).
+- 1 Nó Worker (Platform): Sem restrições de recursos, dedicado para ferramentas de plataforma (label `workload=platform`).
 
 **Manifestos K8s (`/infra/manifest`):**
 - **Namespace**: `hands-on-lab`.
@@ -39,8 +40,9 @@ Configurações do ambiente de execução.
 - **HPA**: Escala de 1 a 10 réplicas quando o uso de CPU passa de 50%.
 
 **Automação Helm (`/infra/helm`):**
-- `setup-infra.sh`: Script para instalar Metrics Server, Kong e Istio.
+- `setup-infra.sh`: Script para instalar Metrics Server, SigNoz, Kong e Istio.
 - `metrics-server/values.yaml`: Configurado para aceitar certificados do Kind.
+- `signoz/values.yaml`: Configuração do SigNoz com `nodeSelector` para o nó `workload=platform` e recursos otimizados.
 
 ---
 
@@ -50,6 +52,8 @@ Configurações do ambiente de execução.
 1. `cd infra && ./create-cluster.sh` # já roda o setup do helm
 2. `cd ../../projects/load-gen-node && ./load-to-kind.sh`
 3. `kubectl apply -f ../../infra/manifest/`
+ou
+`./setup.sh`
 
 ### Monitorar o HPA e Pods:
 ```bash
@@ -61,10 +65,27 @@ watch -n 1 "kubectl get hpa,pods -n hands-on-lab"
 watch -n 1 kubectl top nodes
 ```
 
+### Acessar SigNoz:
+```bash
+# Via port-forward (já incluído no script port-forward.sh)
+# Mapeamos a porta local 3301 para a porta 8080 do SigNoz
+kubectl port-forward -n platform svc/signoz 3301:8080
+
+# Ou usar o script completo que inclui ambos os serviços
+cd infra && ./port-forward.sh
+```
+
+### Verificar Pods do SigNoz:
+```bash
+kubectl get pods -n platform
+```
+
 ---
 
 ## 📝 Notas de Contexto para a IA
 - **WSL2 Environment**: Priorize `port-forward` ou `ingress` via `localhost`.
 - **Porta do Container**: A aplicação roda internamente na porta `3000`.
 - **Estratégia de Carga**: Use a rota `/slow-expensive` para testar o scaling, pois ela trava a thread do Node e consome 100% da fatia de CPU do container.
+- **Namespace Platform**: O namespace `platform` contém ferramentas de observabilidade (SigNoz) e roda exclusivamente no nó com label `workload=platform`.
+- **SigNoz**: Plataforma de observabilidade instalada via Helm (v0.106.0+). O frontend e a API são unificados no serviço `signoz`. Acessível em `localhost:3301` (mapeado para `8080` no cluster) após port-forward. Coleta métricas, logs e traces das aplicações.
 

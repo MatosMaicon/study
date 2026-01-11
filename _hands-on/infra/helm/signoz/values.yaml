@@ -1,0 +1,43 @@
+# Configurações customizadas para o SigNoz v0.106.0+
+# Namespace: platform
+# Node Selector: workload=platform (nó dedicado sem restrições de recursos)
+
+global:
+  storageClass: standard
+
+# ClickHouse - Banco de dados de métricas e traces
+clickhouse:
+  installCustomStorageClass: false
+  nodeSelector:
+    workload: platform
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "2"
+
+# SigNoz unificado (Query Service + Frontend)
+signoz:
+  nodeSelector:
+    workload: platform
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+# OpenTelemetry Collector - Coleta métricas, logs e traces
+otelCollector:
+  nodeSelector:
+    workload: platform
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
