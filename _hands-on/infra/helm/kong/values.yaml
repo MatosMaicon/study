@@ -27,6 +27,14 @@ ingressController:
   enabled: true
   installCRDs: true
 
+status:
+  enabled: true
+  http:
+    enabled: true
+    containerPort: 8100
+  tls:
+    enabled: false
+
 # Configurações para o SigNoz coletar as métricas via anotações
 podAnnotations:
   prometheus.io/scrape: "true"

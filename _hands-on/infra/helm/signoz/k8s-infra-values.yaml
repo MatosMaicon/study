@@ -51,3 +51,7 @@ presets:
   # Métricas do K8s Events
   k8sEvents:
     enabled: true
+  # Habilita a busca automática de métricas em Pods que tenham as anotações prometheus.io/scrape
+  prometheus:
+    enabled: true
+    annotationsPrefix: prometheus.io
