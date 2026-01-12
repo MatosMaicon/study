@@ -24,7 +24,7 @@ spec:
           effect: "NoSchedule"
       containers:
         - name: load-gen-node
-          image: localhost/load-gen-node:latest
+          image: localhost/load-gen-node:v2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
