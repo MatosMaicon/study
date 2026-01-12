@@ -1,8 +1,63 @@
-# Valores customizados para o Kong
+# Valores customizados para o Kong (DB-less mode)
+# Configurado para rodar no namespace platform no nó dedicado
+
+env:
+  database: "off"
+  status_listen: 0.0.0.0:8100 # Habilita o endpoint de métricas e status
+
+admin:
+  enabled: true
+  http:
+    enabled: true
+    servicePort: 8001
+    containerPort: 8001
+  tls:
+    enabled: false # Simplificando para o laboratório
+
+manager:
+  enabled: true
+  http:
+    enabled: true
+    servicePort: 8002
+    containerPort: 8002
+  tls:
+    enabled: false
+
 ingressController:
   enabled: true
   installCRDs: true
 
-proxy:
-  type: NodePort # Usando NodePort para facilitar no Kind sem MetalLB funcional
+# Configurações para o SigNoz coletar as métricas via anotações
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8100"
+  prometheus.io/path: "/metrics"
 
+proxy:
+  type: NodePort 
+  http:
+    nodePort: 30080
+  tls:
+    nodePort: 30443
+
+# Desabilitado pois o SigNoz usa scrape direto via anotações (não precisa de CRD do Prometheus)
+serviceMonitor:
+  enabled: false
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70  
+
+deployment:
+  nodeSelector:
+    workload: platform
+  # Recursos definidos para garantir que o Autoscaling (HPA) funcione
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi

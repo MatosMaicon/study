@@ -19,12 +19,12 @@ helm upgrade --install metrics-server metrics-server/metrics-server \
   -f metrics-server/values.yaml
 
 # 2. Kong
-#echo -e "\n${BLUE}🦍 Instalando Kong API Gateway...${NC}"
-#helm repo add kong https://charts.konghq.com
-#helm repo update
-#helm upgrade --install kong kong/kong \
-#  --namespace kong --create-namespace \
-#  -f kong/values.yaml
+echo -e "\n${BLUE}🦍 Instalando Kong API Gateway (DB-less)...${NC}"
+helm repo add kong https://charts.konghq.com
+helm repo update
+helm upgrade --install kong kong/kong \
+  --namespace platform --create-namespace \
+  -f kong/values.yaml
 
 # 3. Istio (Base e Istiod)
 #echo -e "\n${BLUE}⛵ Instalando Istio (Base)...${NC}"

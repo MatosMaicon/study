@@ -23,7 +23,7 @@ Aplicação Node.js (Express) que simula comportamentos de carga:
 
 **Scripts:**
 - `load-to-kind.sh`: Builda a imagem Docker local (`localhost/load-gen-node`) e injeta no cluster.
-- `port-forward.sh`: Cria túneis estáveis (`port-forward`) para `localhost:8080` (Load Gen Node) e `localhost:3301` (SigNoz Frontend).
+- `port-forward.sh`: Cria túneis estáveis (`port-forward`) para `localhost:8080` (LoadGen), `localhost:3301` (SigNoz), `localhost:8001` (Kong API) e `localhost:8002` (Kong Manager).
 
 ### 2. Infraestrutura (`/infra`)
 Configurações do ambiente de execução.
@@ -76,7 +76,16 @@ kubectl port-forward -n platform svc/signoz 3301:8080
 cd infra && ./port-forward.sh
 ```
 
-### Verificar Pods do SigNoz:
+### Acessar Kong:
+```bash
+# Admin API (Read-only no modo DB-less)
+kubectl port-forward -n platform svc/kong-kong-admin 8001:8001
+
+# Kong Manager (Interface Gráfica)
+kubectl port-forward -n platform svc/kong-kong-manager 8002:8002
+```
+
+### Verificar Pods do SigNoz e Kong:
 ```bash
 kubectl get pods -n platform
 ```
@@ -88,5 +97,6 @@ kubectl get pods -n platform
 - **Porta do Container**: A aplicação roda internamente na porta `3000`.
 - **Estratégia de Carga**: Use a rota `/slow-expensive` para testar o scaling, pois ela trava a thread do Node e consome 100% da fatia de CPU do container.
 - **Namespace Platform**: O namespace `platform` contém ferramentas de observabilidade (SigNoz) e roda exclusivamente no nó com label `workload=platform`.
+- **Convenção Helm**: Toda instalação via Helm deve seguir o padrão do projeto, sendo centralizada no diretório `./infra/helm/`, com seus respectivos arquivos `values.yaml` organizados em subpastas e automatizada no script `setup-infra.sh`.
 - **SigNoz**: Plataforma de observabilidade instalada via Helm (v0.106.0+). O frontend e a API são unificados no serviço `signoz`. Acessível em `localhost:3301` (mapeado para `8080` no cluster) após port-forward. Coleta métricas, logs e traces das aplicações.
 
