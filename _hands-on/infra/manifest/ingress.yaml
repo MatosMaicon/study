@@ -4,13 +4,13 @@ metadata:
   name: load-gen-node-ingress
   namespace: application
   annotations:
-    ingress.kubernetes.io/rewrite-target: /
+    konghq.com/strip-path: "true" # Remove o prefixo /load-gen-node antes de enviar para o app
 spec:
+  ingressClassName: kong # Define que o Kong deve gerenciar este Ingress
   rules:
-    - host: load-gen.local
-      http:
+    - http:
         paths:
-          - path: /
+          - path: /load-gen-node
             pathType: Prefix
             backend:
               service:

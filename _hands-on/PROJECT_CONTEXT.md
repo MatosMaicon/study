@@ -23,7 +23,7 @@ Aplicação Node.js (Express) que simula comportamentos de carga:
 
 **Scripts:**
 - `load-to-kind.sh`: Builda a imagem Docker local (`localhost/load-gen-node`) e injeta no cluster.
-- `port-forward.sh`: Cria túneis estáveis (`port-forward`) para `localhost:8080` (LoadGen), `localhost:3301` (SigNoz), `localhost:8001` (Kong API) e `localhost:8002` (Kong Manager).
+- `port-forward.sh`: Cria túneis estáveis para `localhost:8000` (Kong Gateway), `localhost:3301` (SigNoz), `localhost:8001` (Kong API) e `localhost:8002` (Kong Manager).
 
 ### 2. Infraestrutura (`/infra`)
 Configurações do ambiente de execução.
@@ -78,6 +78,10 @@ cd infra && ./port-forward.sh
 
 ### Acessar Kong:
 ```bash
+# Gateway Proxy (Acesso à Aplicação)
+# Mapeado via Ingress para o path /load-gen-node
+kubectl port-forward -n platform svc/kong-kong-proxy 8000:80
+
 # Admin API (Read-only no modo DB-less)
 kubectl port-forward -n platform svc/kong-kong-admin 8001:8001
 

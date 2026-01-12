@@ -16,10 +16,6 @@ port_forward_loop() {
   done
 }
 
-# Port-forward do Load Gen Node
-port_forward_loop "application" "load-gen-node-service" "8080" "80" "LoadGen" &
-LOADGEN_PID=$!
-
 # Port-forward do SigNoz (Frontend + API)
 port_forward_loop "platform" "signoz" "3301" "8080" "SigNoz" &
 SIGNOZ_PID=$!
@@ -32,8 +28,12 @@ KONG_ADMIN_PID=$!
 port_forward_loop "platform" "kong-kong-manager" "8002" "8002" "KongManager" &
 KONG_GUI_PID=$!
 
+# Port-forward do Kong Proxy (Entrada de Tráfego)
+port_forward_loop "platform" "kong-kong-proxy" "8000" "80" "KongProxy" &
+KONG_PROXY_PID=$!
+
 echo "🚀 Port-Forwards iniciados:"
-echo "📍 Load Gen Node: http://localhost:8080"
+echo "📍 Kong Proxy (Gateway): http://localhost:8000/load-gen-node"
 echo "📍 SigNoz: http://localhost:3301"
 echo "📍 Kong Admin API: http://localhost:8001"
 echo "📍 Kong Manager (UI): http://localhost:8002"
@@ -43,7 +43,7 @@ echo "💡 Dica: Use CTRL+C para parar os proxies."
 cleanup() {
   echo ""
   echo "🛑 Encerrando port-forwards..."
-  kill $LOADGEN_PID $SIGNOZ_PID $KONG_ADMIN_PID $KONG_GUI_PID 2>/dev/null
+  kill $SIGNOZ_PID $KONG_ADMIN_PID $KONG_GUI_PID $KONG_PROXY_PID 2>/dev/null
   exit 0
 }
 
