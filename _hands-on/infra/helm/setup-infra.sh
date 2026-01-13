@@ -27,16 +27,16 @@ helm upgrade --install kong kong/kong \
   -f kong/values.yaml
 
 # 3. Istio (Base e Istiod)
-#echo -e "\n${BLUE}⛵ Instalando Istio (Base)...${NC}"
-#helm repo add istio https://istio-release.storage.googleapis.com/charts
-#helm repo update
-#helm upgrade --install istio-base istio/base \
-#  --namespace istio-system --create-namespace
+echo -e "\n${BLUE}⛵ Instalando Istio (Base)...${NC}"
+helm repo add istio https://istio-release.storage.googleapis.com/charts
+helm repo update
+helm upgrade --install istio-base istio/base \
+  --namespace platform --create-namespace
 
-#echo -e "${BLUE}⛵ Instalando Istio (Discovery/Istiod)...${NC}"
-#helm upgrade --install istiod istio/istiod \
-#  --namespace istio-system \
-#  -f istio/values.yaml
+echo -e "${BLUE}⛵ Instalando Istio (Discovery/Istiod)...${NC}"
+helm upgrade --install istiod istio/istiod \
+  --namespace platform \
+  -f istio/values.yaml
 
 # 4. SigNoz
 echo -e "\n${BLUE}📊 Instalando SigNoz...${NC}"

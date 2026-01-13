@@ -7,3 +7,12 @@ global:
         cpu: 10m
         memory: 40Mi
 
+meshConfig:
+  extensionProviders:
+    - name: "otel-tracing"
+      otel:
+        service: "signoz-otel-collector.platform.svc.cluster.local"
+        port: 4318
+  defaultProviders:
+    tracing:
+      - "otel-tracing"
