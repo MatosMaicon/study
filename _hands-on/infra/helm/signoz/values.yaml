@@ -12,10 +12,10 @@ clickhouse:
     workload: platform
   resources:
     requests:
-      memory: "1Gi"
-      cpu: "500m"
-    limits:
       memory: "2Gi"
+      cpu: "1"
+    limits:
+      memory: "4Gi"
       cpu: "2"
 
 # SigNoz unificado (Query Service + Frontend)
@@ -36,8 +36,8 @@ otelCollector:
     workload: platform
   resources:
     requests:
-      memory: "256Mi"
-      cpu: "100m"
-    limits:
       memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
       cpu: "500m"
