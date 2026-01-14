@@ -18,8 +18,8 @@ Criar um ambiente controlado para estudar o comportamento de aplicações em con
 Aplicação Node.js (Express) que simula comportamentos de carga:
 - **GET /fast-cheap**: 200ms (Assíncrono).
 - **GET /slow-cheap**: 5000ms (Assíncrono).
-- **GET /fast-expensive**: 200ms (CPU Bound - Trava o Event Loop).
-- **GET /slow-expensive**: 5000ms (CPU Bound - Trava o Event Loop).
+- **GET /fast-expensive**: 200ms (Aloca 50MB durante a requisição).
+- **GET /slow-expensive**: 5000ms (Aloca 50MB durante a requisição).
 
 ### 2. Backend - Cadeia de Microserviços (`/projects/project-{a,b,c}`)
 Três microserviços Node.js (Express) que formam uma cadeia de chamadas:
