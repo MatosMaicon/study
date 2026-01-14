@@ -3,6 +3,7 @@
 # Cores
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
 NC='\033[0m'
 
 echo -e "${BLUE}🚀 Iniciando instalação da infraestrutura via Helm...${NC}"
@@ -22,6 +23,7 @@ helm upgrade --install metrics-server metrics-server/metrics-server \
 echo -e "\n${BLUE}🦍 Instalando Kong API Gateway (DB-less)...${NC}"
 helm repo add kong https://charts.konghq.com
 helm repo update
+
 helm upgrade --install kong kong/kong \
   --namespace platform --create-namespace \
   -f kong/values.yaml
@@ -30,12 +32,15 @@ helm upgrade --install kong kong/kong \
 echo -e "\n${BLUE}⛵ Instalando Istio (Base)...${NC}"
 helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo update
+
+# O Istio usa o namespace istio-system por padrão
 helm upgrade --install istio-base istio/base \
-  --namespace platform --create-namespace
+  --namespace istio-system --create-namespace
 
 echo -e "${BLUE}⛵ Instalando Istio (Discovery/Istiod)...${NC}"
+# O Istiod (control plane) roda no namespace istio-system (padrão do Istio)
 helm upgrade --install istiod istio/istiod \
-  --namespace platform \
+  --namespace istio-system --create-namespace \
   -f istio/values.yaml
 
 # 4. SigNoz

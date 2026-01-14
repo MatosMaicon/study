@@ -25,7 +25,7 @@ manager:
 
 ingressController:
   enabled: true
-  installCRDs: true
+  installCRDs: false
 
 status:
   enabled: true

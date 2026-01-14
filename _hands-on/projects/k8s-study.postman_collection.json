@@ -1,0 +1,208 @@
+{
+	"info": {
+		"_postman_id": "8d7f8d3d-c58e-4a6a-9f5b-5b5b5b5b5b5b",
+		"name": "K8s Study - Load Gen Node & Project A",
+		"description": "Coleção para testar as rotas de simulação de carga (CPU e tempo de resposta) e a cadeia de microserviços.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Load Gen Node",
+			"item": [
+				{
+					"name": "Baratas (Pouco Recurso)",
+					"item": [
+						{
+							"name": "Fast Cheap (200ms)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{kong_gateway}}/load-gen-node/fast-cheap",
+									"host": [
+										"{{kong_gateway}}"
+									],
+									"path": [
+										"load-gen-node",
+										"fast-cheap"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Slow Cheap (5000ms)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{kong_gateway}}/load-gen-node/slow-cheap",
+									"host": [
+										"{{kong_gateway}}"
+									],
+									"path": [
+										"load-gen-node",
+										"slow-cheap"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Caras (Alto CPU)",
+					"item": [
+						{
+							"name": "Fast Expensive (200ms CPU Bound)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{kong_gateway}}/load-gen-node/fast-expensive",
+									"host": [
+										"{{kong_gateway}}"
+									],
+									"path": [
+										"load-gen-node",
+										"fast-expensive"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Slow Expensive (5000ms CPU Bound)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{kong_gateway}}/load-gen-node/slow-expensive",
+									"host": [
+										"{{kong_gateway}}"
+									],
+									"path": [
+										"load-gen-node",
+										"slow-expensive"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Utilities",
+					"item": [
+						{
+							"name": "Health Check",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{kong_gateway}}/load-gen-node/health",
+									"host": [
+										"{{kong_gateway}}"
+									],
+									"path": [
+										"load-gen-node",
+										"health"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Project A",
+			"item": [
+				{
+					"name": "Chain",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{kong_gateway}}/project-a/chain",
+							"host": [
+								"{{kong_gateway}}"
+							],
+							"path": [
+								"project-a",
+								"chain"
+							]
+						},
+						"description": "Chama load-gen-node/fast-expensive e delega para project-b/chain, que por sua vez chama project-c/chain. Cada projeto na cadeia também chama o load-gen-node."
+					},
+					"response": []
+				},
+				{
+					"name": "Poison",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{kong_gateway}}/project-a/poison",
+							"host": [
+								"{{kong_gateway}}"
+							],
+							"path": [
+								"project-a",
+								"poison"
+							]
+						},
+						"description": "Cada projeto na cadeia escolhe independentemente uma rota do load-gen-node (90% fast-expensive, 10% dividido entre as outras 3 rotas). Permite simular falhas e degradação de performance de forma distribuída."
+					},
+					"response": []
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{kong_gateway}}/project-a/health",
+							"host": [
+								"{{kong_gateway}}"
+							],
+							"path": [
+								"project-a",
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "kong_gateway",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}

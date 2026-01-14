@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project-c
+  namespace: application
+  labels:
+    app: project-c
+spec:
+  selector:
+    matchLabels:
+      app: project-c
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: project-c
+    spec:
+      nodeSelector:
+        workload: application
+      tolerations:
+        - key: "dedicated"
+          operator: "Equal"
+          value: "application"
+          effect: "NoSchedule"
+      containers:
+        - name: project-c
+          image: localhost/project-c:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 2
+            periodSeconds: 5

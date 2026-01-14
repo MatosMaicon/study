@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: project-a-ingress
+  namespace: application
+  annotations:
+    konghq.com/strip-path: "true" # Remove o prefixo /project-a antes de enviar para o app
+spec:
+  ingressClassName: kong # Define que o Kong deve gerenciar este Ingress
+  rules:
+    - http:
+        paths:
+          - path: /project-a
+            pathType: Prefix
+            backend:
+              service:
+                name: project-a-service
+                port:
+                  number: 80

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project-b
+  namespace: application
+  labels:
+    app: project-b
+spec:
+  selector:
+    matchLabels:
+      app: project-b
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: project-b
+    spec:
+      nodeSelector:
+        workload: application
+      tolerations:
+        - key: "dedicated"
+          operator: "Equal"
+          value: "application"
+          effect: "NoSchedule"
+      containers:
+        - name: project-b
+          image: localhost/project-b:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 2
+            periodSeconds: 5

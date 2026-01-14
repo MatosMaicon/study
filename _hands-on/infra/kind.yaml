@@ -62,4 +62,4 @@ nodes:
         kind: JoinConfiguration
         nodeRegistration:
           kubeletExtraArgs:
-            node-labels: "workload=platform"
+            node-labels: "workload=platform,istio-injection=enabled"

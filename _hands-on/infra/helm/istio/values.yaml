@@ -1,5 +1,5 @@
 # Valores customizados para o Istio
-# Geralmente o Istio é instalado via istioctl ou Helm charts específicos (base, discovery)
+# Usando namespace padrão istio-system
 global:
   proxy:
     resources:
