@@ -20,10 +20,10 @@ function selectLoadGenRoute() {
   }
 }
 
-// Rota /chain: chama load-gen-node/fast-expensive
+// Rota /chain: chama load-gen-node/fast-cheap
 app.get('/chain', async (req, res) => {
   try {
-    const loadGenResponse = await axios.get(`${LOAD_GEN_NODE_URL}/fast-expensive`);
+    const loadGenResponse = await axios.get(`${LOAD_GEN_NODE_URL}/fast-cheap`);
 
     res.json({
       status: 'success',

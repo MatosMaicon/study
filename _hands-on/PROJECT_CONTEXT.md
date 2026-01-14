@@ -25,15 +25,15 @@ Aplicação Node.js (Express) que simula comportamentos de carga:
 Três microserviços Node.js (Express) que formam uma cadeia de chamadas:
 
 **Project A** (exposto via Kong Gateway em `/project-a`):
-- **GET /chain**: Chama `load-gen-node/fast-expensive` e delega para `project-b/chain`.
+- **GET /chain**: Chama `load-gen-node/fast-cheap` e delega para `project-b/chain`.
 - **GET /poison**: Escolhe independentemente uma rota do `load-gen-node` (90% `/fast-cheap`, 10% dividido entre as outras 3 rotas) e delega para `project-b/poison`.
 
 **Project B** (acesso apenas interno):
-- **GET /chain**: Chama `load-gen-node/fast-expensive` e delega para `project-c/chain`.
+- **GET /chain**: Chama `load-gen-node/fast-cheap` e delega para `project-c/chain`.
 - **GET /poison**: Escolhe independentemente uma rota do `load-gen-node` (mesma lógica do Project A) e delega para `project-c/poison`.
 
 **Project C** (acesso apenas interno):
-- **GET /chain**: Chama `load-gen-node/fast-expensive`.
+- **GET /chain**: Chama `load-gen-node/fast-cheap`.
 - **GET /poison**: Escolhe independentemente uma rota do `load-gen-node` (mesma lógica dos outros projetos).
 
 **Scripts:**

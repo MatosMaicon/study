@@ -21,11 +21,11 @@ function selectLoadGenRoute() {
   }
 }
 
-// Rota /chain: chama load-gen-node/fast-expensive e project-b/chain
+// Rota /chain: chama load-gen-node/fast-cheap e project-b/chain
 app.get('/chain', async (req, res) => {
   try {
     const [loadGenResponse, projectBResponse] = await Promise.all([
-      axios.get(`${LOAD_GEN_NODE_URL}/fast-expensive`),
+      axios.get(`${LOAD_GEN_NODE_URL}/fast-cheap`),
       axios.get(`${PROJECT_B_URL}/chain`)
     ]);
 
