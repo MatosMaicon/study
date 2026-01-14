@@ -37,9 +37,8 @@ Três microserviços Node.js (Express) que formam uma cadeia de chamadas:
 - **GET /poison**: Escolhe independentemente uma rota do `load-gen-node` (mesma lógica dos outros projetos).
 
 **Scripts:**
-- `build-all.sh`: Builda e carrega todas as imagens Docker (`load-gen-node`, `project-a`, `project-b`, `project-c`) no cluster Kind.
-- `load-to-kind.sh`: Script individual para buildar apenas o `load-gen-node` (mantido para compatibilidade).
-- `port-forward.sh`: Cria túneis estáveis para `localhost:8000` (Kong Gateway), `localhost:3301` (SigNoz), `localhost:8001` (Kong API) e `localhost:8002` (Kong Manager).
+- `build-all.sh`: Localizado em `/projects`, builda e carrega todas as imagens Docker (`load-gen-node`, `project-a`, `project-b`, `project-c`) no cluster Kind.
+- `port-forward.sh`: Localizado em `/infra`, cria túneis estáveis para `localhost:8000` (Kong Gateway), `localhost:3301` (SigNoz), `localhost:8001` (Kong API) e `localhost:8002` (Kong Manager).
 
 ### 2. Infraestrutura (`/infra`)
 Configurações do ambiente de execução.
@@ -87,11 +86,11 @@ watch -n 1 kubectl top nodes
 
 ### Acessar SigNoz:
 ```bash
-# Via port-forward (já incluído no script port-forward.sh)
+# Via port-forward (já incluído no script port-forward.sh em /infra)
 # Mapeamos a porta local 3301 para a porta 8080 do SigNoz
 kubectl port-forward -n platform svc/signoz 3301:8080
 
-# Ou usar o script completo que inclui ambos os serviços
+# Ou usar o script completo que inclui os serviços de plataforma
 cd infra && ./port-forward.sh
 ```
 
