@@ -26,7 +26,7 @@ Três microserviços Node.js (Express) que formam uma cadeia de chamadas:
 
 **Project A** (exposto via Kong Gateway em `/project-a`):
 - **GET /chain**: Chama `load-gen-node/fast-expensive` e delega para `project-b/chain`.
-- **GET /poison**: Escolhe independentemente uma rota do `load-gen-node` (90% `/fast-expensive`, 10% dividido entre as outras 3 rotas) e delega para `project-b/poison`.
+- **GET /poison**: Escolhe independentemente uma rota do `load-gen-node` (90% `/fast-cheap`, 10% dividido entre as outras 3 rotas) e delega para `project-b/poison`.
 
 **Project B** (acesso apenas interno):
 - **GET /chain**: Chama `load-gen-node/fast-expensive` e delega para `project-c/chain`.
@@ -130,7 +130,7 @@ kubectl get pods -n platform
 - **Porta do Container**: Todas as aplicações rodam internamente na porta `3000`.
 - **Estratégia de Carga**: Use a rota `/slow-expensive` do `load-gen-node` para testar o scaling, pois ela trava a thread do Node e consome 100% da fatia de CPU do container.
 - **Cadeia de Microserviços**: Os projetos A, B e C formam uma cadeia onde cada um chama o `load-gen-node` e delega para o próximo. Apenas o Project A é exposto via Kong Gateway. Os Projects B e C são acessíveis apenas internamente via service mesh.
-- **Rota Poison**: A rota `/poison` implementa uma lógica de "poison" onde cada projeto independentemente sorteia a rota do `load-gen-node` (90% `/fast-expensive`, 10% dividido entre `/fast-cheap`, `/slow-cheap` e `/slow-expensive`). Isso permite simular falhas e degradação de performance de forma distribuída.
+- **Rota Poison**: A rota `/poison` implementa uma lógica de "poison" onde cada projeto independentemente sorteia a rota do `load-gen-node` (90% `/fast-cheap`, 10% dividido entre `/fast-expensive`, `/slow-cheap` e `/slow-expensive`). Isso permite simular falhas e degradação de performance de forma distribuída.
 - **Namespace Platform**: O namespace `platform` contém ferramentas de observabilidade (SigNoz) e roda exclusivamente no nó com label `workload=platform`.
 - **Convenção Helm**: Toda instalação via Helm deve seguir o padrão do projeto, sendo centralizada no diretório `./infra/helm/`, com seus respectivos arquivos `values.yaml` organizados em subpastas e automatizada no script `setup-infra.sh`.
 - **SigNoz**: Plataforma de observabilidade instalada via Helm (v0.106.0+). O frontend e a API são unificados no serviço `signoz`. Acessível em `localhost:3301` (mapeado para `8080` no cluster) após port-forward. Coleta métricas, logs e traces das aplicações, permitindo visualizar a cadeia completa de chamadas entre os microserviços.

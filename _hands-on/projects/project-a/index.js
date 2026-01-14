@@ -11,11 +11,11 @@ const PROJECT_B_URL = process.env.PROJECT_B_URL || 'http://project-b-service.app
 function selectLoadGenRoute() {
   const random = Math.random();
   if (random < 0.9) {
-    // 90% das vezes: rota rápida
-    return '/fast-expensive';
+    // 90% das vezes: rota rápida e barata
+    return '/fast-cheap';
   } else {
-    // 10% das vezes: uma das 3 rotas problemáticas (dividido igualmente)
-    const poisonRoutes = ['/fast-cheap', '/slow-cheap', '/slow-expensive'];
+    // 10% das vezes: uma das 3 rotas mais pesadas (dividido igualmente)
+    const poisonRoutes = ['/fast-expensive', '/slow-cheap', '/slow-expensive'];
     const poisonIndex = Math.floor((random - 0.9) / 0.1 * 3);
     return poisonRoutes[poisonIndex];
   }
