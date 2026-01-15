@@ -39,6 +39,7 @@ Três microserviços Node.js (Express) que formam uma cadeia de chamadas:
 **Scripts:**
 - `build-all.sh`: Localizado em `/projects`, builda e carrega todas as imagens Docker (`load-gen-node`, `project-a`, `project-b`, `project-c`) no cluster Kind.
 - `port-forward.sh`: Localizado em `/infra`, cria túneis estáveis para `localhost:8000` (Kong Gateway), `localhost:3301` (SigNoz), `localhost:8001` (Kong API) e `localhost:8002` (Kong Manager).
+- `load-test/index.js`: Script Node.js para realizar testes de carga com paralelismo e duração configuráveis.
 
 ### 2. Infraestrutura (`/infra`)
 Configurações do ambiente de execução.
