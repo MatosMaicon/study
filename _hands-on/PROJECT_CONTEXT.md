@@ -4,7 +4,7 @@ Este documento serve como bússola de contexto para o desenvolvimento do laborat
 
 ## 🚀 Objetivo do Projeto
 Criar um ambiente controlado para estudar o comportamento de aplicações em containers, testando especificamente:
-- **HPA (Horizontal Pod Autoscaler)** sob estresse de CPU.
+- **HPA (Horizontal Pod Autoscaler)** sob estresse de CPU e Memória.
 - **Limites de Recursos** (Requests/Limits) em nós simulados.
 - **Infraestrutura como Código** usando manifestos K8s e Helm.
 - **Observabilidade** com SigNoz (métricas, logs e traces).
@@ -50,12 +50,12 @@ Configurações do ambiente de execução.
 
 **Manifestos K8s (`/infra/manifest`):**
 - **Namespace**: `application`.
-- **Load Gen Node**: Deployment, Service, HPA e Ingress (exposto em `/load-gen-node`).
-- **Project A**: Deployment, Service, HPA e Ingress (exposto em `/project-a` via Kong Gateway).
-- **Project B & C**: Deployment, Service e HPA (acesso apenas interno via service mesh).
-- Todos os Deployments configurados com 100m CPU de request, `nodeSelector` e `tolerations` para rodar exclusivamente nos nós de aplicação.
+- **Load Gen Node**: Deployment (Request: 100m CPU/256Mi RAM, Limit: 500m CPU/512Mi RAM, NODE_OPTIONS: --max-old-space-size=432), Service, HPA (Escala por CPU e Memória) e Ingress (exposto em `/load-gen-node`).
+- **Project A**: Deployment (Request: 100m CPU/128Mi RAM, Limit: 500m CPU/256Mi RAM), Service, HPA (Escala por CPU) e Ingress (exposto em `/project-a` via Kong Gateway).
+- **Project B & C**: Deployment (Igual ao Project A), Service e HPA (acesso apenas interno via service mesh).
+- Todos os Deployments configurados com `nodeSelector` e `tolerations` para rodar exclusivamente nos nós de aplicação.
 - Todos os Services são do tipo `LoadBalancer` (usamos proxy por limitações de rede WSL2).
-- Todos os HPAs escalam de 1 a 10 réplicas quando o uso de CPU passa de 50%.
+- Todos os HPAs escalam de 1 a 10 réplicas quando o uso de CPU ou Memória passa de 50% (conforme configurado em cada manifesto).
 
 **Automação Helm (`/infra/helm`):**
 - `setup-infra.sh`: Script para instalar Metrics Server, SigNoz, SigNoz K8s Infra, Kong e Istio.
@@ -128,7 +128,7 @@ kubectl get pods -n platform
 ## 📝 Notas de Contexto para a IA
 - **WSL2 Environment**: Priorize `port-forward` ou `ingress` via `localhost`.
 - **Porta do Container**: Todas as aplicações rodam internamente na porta `3000`.
-- **Estratégia de Carga**: Use a rota `/slow-expensive` do `load-gen-node` para testar o scaling, pois ela trava a thread do Node e consome 100% da fatia de CPU do container.
+- **Estratégia de Carga**: Use a rota `/slow-expensive` do `load-gen-node` para testar o scaling e resiliência. Ela aloca 50MB de memória durante a requisição, permitindo testar o escalonamento horizontal e o comportamento de OOMKilled se muitas requisições simultâneas ocorrerem em um único pod.
 - **Cadeia de Microserviços**: Os projetos A, B e C formam uma cadeia onde cada um chama o `load-gen-node` e delega para o próximo. Apenas o Project A é exposto via Kong Gateway. Os Projects B e C são acessíveis apenas internamente via service mesh.
 - **Rota Poison**: A rota `/poison` implementa uma lógica de "poison" onde cada projeto independentemente sorteia a rota do `load-gen-node` (90% `/fast-cheap`, 10% dividido entre `/fast-expensive`, `/slow-cheap` e `/slow-expensive`). Isso permite simular falhas e degradação de performance de forma distribuída.
 - **Namespace Platform**: O namespace `platform` contém ferramentas de observabilidade (SigNoz) e roda exclusivamente no nó com label `workload=platform`.
