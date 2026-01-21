@@ -5,6 +5,10 @@ metadata:
   namespace: application
   annotations:
     konghq.com/strip-path: "true" # Remove o prefixo /load-gen-node antes de enviar para o app
+    konghq.com/protocol: "http"
+    konghq.com/service-upstream: "true"
+    ingress.kubernetes.io/service-upstream: "true"
+    konghq.com/preserve-host: "false" 
 spec:
   ingressClassName: kong # Define que o Kong deve gerenciar este Ingress
   rules:

@@ -3,11 +3,16 @@ kind: Service
 metadata:
   name: load-gen-node-service
   namespace: application
+  annotations:
+    # ESTA É A LINHA QUE FORÇA O KONG A USAR O ISTIO:
+    konghq.com/service-upstream: "true"
+    ingress.kubernetes.io/service-upstream: "true"
 spec:
   selector:
     app: load-gen-node
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
       targetPort: 3000
   type: LoadBalancer

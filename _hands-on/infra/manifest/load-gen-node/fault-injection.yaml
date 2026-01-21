@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: load-gen-node-fault-injection
+  namespace: application
+spec:
+  hosts:
+  - load-gen-node-service.application.svc.cluster.local
+  - load-gen-node-service.application.svc
+  - load-gen-node-service
+  gateways:
+  - mesh
+  exportTo:
+  - "*"
+  http:
+  - fault:
+      abort:
+        httpStatus: 522
+        percentage:
+          value: 10
+    route:
+    - destination:
+        host: load-gen-node-service
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: load-gen-node-dr
+  namespace: application
+spec:
+  host: load-gen-node-service
+  subsets:
+  - name: all
+    labels:
+      app: load-gen-node

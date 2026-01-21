@@ -11,6 +11,11 @@ echo -e "${BLUE}🚀 Iniciando instalação da infraestrutura via Helm...${NC}"
 # Garante que o script rode a partir do diretório onde ele está
 cd "$(dirname "$0")"
 
+# 0. Preparar Namespaces e Labels (Crítico para o Istio)
+echo -e "\n${BLUE}📂 Preparando Namespaces...${NC}"
+kubectl apply -f ../manifest/namespace.yaml
+kubectl apply -f ../manifest/platform-namespace.yaml
+
 # 1. Metrics Server
 echo -e "\n${BLUE}📊 Instalando Metrics Server...${NC}"
 helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/

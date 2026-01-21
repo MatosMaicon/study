@@ -35,8 +35,9 @@ status:
   tls:
     enabled: false
 
-# Configurações para o SigNoz coletar as métricas via anotações
+# Configurações para o SigNoz coletar as métricas via anotações e injeção do Istio
 podAnnotations:
+  sidecar.istio.io/inject: "true"
   prometheus.io/scrape: "true"
   prometheus.io/port: "8100"
   prometheus.io/path: "/metrics"
